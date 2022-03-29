@@ -1,7 +1,7 @@
 /**
  * @Author: Vitali Saroka
  * @Description: Hash calc command line tool
- * @Date: 2022/3/29 16:10
+ * @Date: 2022/3/29 16:57
  */
 package main
  
@@ -39,7 +39,6 @@ func main() {
 	
 	if mode == "parallel" {
 		fmt.Println("Calculating in parallel mode!")
-		shaResponses := make(chan string)
 		var wg sync.WaitGroup
 		wg.Add(len(files))
 		
@@ -47,15 +46,9 @@ func main() {
 			path := getPath(folder,file.Name())
 			go func(path string) {
 				defer wg.Done()
-				shaResponses <- path + getSHA256(path)
+				fmt.Println(path + getSHA256(path))			
 			}(path)
 		}
-		go func() {
-				for response := range shaResponses {
-					fmt.Println(response)
-				}
-			}()
-
 		wg.Wait()
 	} else {
 		fmt.Println("Calculating in sequential mode!")
@@ -65,7 +58,6 @@ func main() {
 			calcAndPrintHash(path)
 		}
 	} 
-	fmt.Scanln() 
 }
 
 func calcAndPrintHash (path string) {
