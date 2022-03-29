@@ -37,7 +37,9 @@ func main() {
 	fmt.Println("Starting md5sum calculations ...")
 
 	
-	if mode == "" {
+	if mode == "parallel" {
+		fmt.Println("Calculating in parallel mode!")
+	} else {
 		fmt.Println("Calculating in sequential mode!")
 		fmt.Println("If you need paralle mode please use -m parallel")
 	}
@@ -87,4 +89,3 @@ func getSHA256(path string) string {
 
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
-
