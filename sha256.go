@@ -1,7 +1,7 @@
 /**
  * @Author: Vitali Saroka
  * @Description: Hash calc command line tool
- * @Date: 2022/3/28 11:20
+ * @Date: 2022/3/29 15:29
  */
 package main
  
@@ -10,7 +10,6 @@ import (
 	"flag"
 	"os"
 	"io/ioutil"
-	"log"
 	"crypto/sha256"
 	"io"
 )
@@ -24,16 +23,19 @@ func main() {
 	flag.Parse()
 	
 	if folder == "" {
-        fmt.Println("There is no folder defined, please use -f parameter and folder name, e.g. -f myfolder")
+        fmt.Println("There is no path to folder defined, please use -f parameter and folder name, e.g. -f myfolder")
         os.Exit(1)
     }
     
-    files, err := ioutil.ReadDir(folder)
-	if err != nil {
-		log.Fatal(err)
-	}
+    files := getOnlyFiles(folder)
+    
+	if len(files) < 1 {
+        fmt.Println("No files found! Exiting!")
+        os.Exit(1)
+    }
 	
 	fmt.Println("Starting md5sum calculations ...")
+
 	
 	if mode == "" {
 		fmt.Println("Calculating in sequential mode!")
@@ -42,21 +44,33 @@ func main() {
 	
 	for _, file := range files {
 		path := folder+"/"+file.Name()
-		if file.IsDir() == false {
-		    if mode == "parallel" {
-				go CalcAndPrintHash(path)
-		    } else {
-				CalcAndPrintHash(path)
-		    }  
-		}	
+		if mode == "parallel" {
+			go calcAndPrintHash(path)
+		} else {
+			calcAndPrintHash(path)
+		}  	
 	}
 
     fmt.Scanln() 
 }
 
-func CalcAndPrintHash (path string) {
+func calcAndPrintHash (path string) {
 	checksum := getSHA256(path)
 	fmt.Println(path, checksum)
+}
+
+func getOnlyFiles(path string) []os.FileInfo {
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		panic(err)
+	}
+	onlyFiles := files[:0]
+	for _, file := range files {
+		if file.IsDir() == false {
+		    onlyFiles = append(onlyFiles, file)
+		}	
+	}
+	return onlyFiles;
 } 
 
 func getSHA256(path string) string {
