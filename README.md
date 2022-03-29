@@ -39,6 +39,6 @@ go run sha256.go -f myfolder
 ```sh
 go run sha256.go -f myfolder -m parallel
 ```
-You should press enter at the end of the script.
+You should press Enter key at the end of the script.
 
 
