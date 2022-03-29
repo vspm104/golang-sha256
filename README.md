@@ -15,7 +15,7 @@ Installation process depends on your platform. Please refer to the link above fo
 ## Usage
 
 ### Available parameters:
-**-f** - for folder name or path  
+**-f** - for folder name or full path to a folder  
 **-m** - for parallel or sequential mode
 
 ### I. Example with waitgroup 
